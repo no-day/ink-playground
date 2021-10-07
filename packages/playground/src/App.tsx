@@ -1,11 +1,13 @@
-import Wasm from "./Wasm";
-import Welcome from "./Welcome";
+import { Header } from './components/Header';
+import { Editor } from './components/Editor';
+import { Console } from './components/Console';
 
 const App = () => {
   return (
     <>
-      <Welcome />
-      <Wasm />
+      <Header />
+      <Editor />
+      <Console />
     </>
   );
 };
