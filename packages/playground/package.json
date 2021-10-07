@@ -2,8 +2,12 @@
   "name": "ink_playground",
   "dependencies": {
     "comlink": "^4.3.1",
+    "css-loader": "^6.3.0",
+    "monaco-editor-webpack-plugin": "^4.2.0",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-monaco-editor": "^0.45.0",
+    "style-loader": "^3.3.0"
   },
   "scripts": {
     "build": "rimraf dist pkg && webpack --config webpack.config.js --mode production",
@@ -14,7 +18,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.1.0",
     "@types/jest": "^27.0.1",
-    "@types/react": "^17.0.21",
+    "@types/react": "^17.0.27",
     "@types/react-dom": "^17.0.8",
     "@wasm-tool/wasm-pack-plugin": "^1.5.0",
     "html-webpack-plugin": "^5.3.1",
