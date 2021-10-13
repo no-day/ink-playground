@@ -1,7 +1,6 @@
 const path = require('path');
 const htmlWebpackPlugin = require('html-webpack-plugin');
 const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin');
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -38,11 +37,7 @@ module.exports = {
       crateDirectory: path.resolve(__dirname, '../../crates/playground'),
       extraArgs: '--target web -- -Z build-std=panic_abort,std',
       outDir: path.resolve(__dirname, './pkg'),
-    }),
-    new MonacoWebpackPlugin({
-      // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
-      languages: ['rust'],
-    }),
+    })
   ],
   experiments: {
     asyncWebAssembly: true,

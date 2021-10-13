@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import MonacoEditor from 'react-monaco-editor';
+import MonacoEditor from '@monaco-editor/react';
 import exampleCode from './example-code';
 
 export const Editor = () => {
@@ -8,8 +8,8 @@ export const Editor = () => {
   const [showMinimap, setShowMinimap] = useState(true);
   const [showNumbering, setShowNumbering] = useState(true);
 
-  const handleChange = (newValue: string) => {
-    setCode(newValue);
+  const handleChange = (newValue: string | undefined) => {
+    newValue && setCode(newValue);
   };
 
   const editorDidMount = (editor: any) => {
@@ -42,7 +42,7 @@ export const Editor = () => {
         value={code}
         options={options}
         onChange={handleChange}
-        editorDidMount={editorDidMount}
+        //editorDidMount={editorDidMount}
       />
     </>
   );
