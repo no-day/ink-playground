@@ -10,6 +10,7 @@ const fullConfig = resolveConfig(tailwindConfig as TailwindConfig);
 export type ButtonProps = {
   label: string;
   Icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  darkmode: boolean;
   onClick: (
     e?: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ) => void | Promise<void> | null;
@@ -24,12 +25,14 @@ export type ButtonProps = {
 export const ButtonWithIcon = ({
   label,
   Icon,
+  darkmode,
   onClick,
   testId,
   disabled,
   loading,
   isMenuOption = false,
   tooltipContent = '',
+  borderColor = '',
 }: ButtonProps): ReactElement => {
   const disabledClasses =
     disabled || loading
@@ -44,28 +47,51 @@ export const ButtonWithIcon = ({
     // Get shades of gray from tailwind config
     type Colors = { gray: Record<string, string> };
     const colors = fullConfig.theme.colors as Colors;
-    const gray600 = colors.gray['600'];
-    const gray200 = colors.gray['200'];
+    // Icon colors dark mode
+    const grayDisabledDark = colors.gray['600'];
+    const grayEnabledDark = colors.gray['200'];
+    // Icon colors light mode
+    const grayDisabledLight = colors.gray['400'];
+    const grayEnabledLight = colors.gray['600'];
 
     if (loading) return <i className={spinnerIcon} data-testid={'icon-loading'} />;
-    if (disabled) return <Icon color={gray600} className={disabledIcon} data-testid={testId} />;
-    return <Icon color={gray200} className={iconStyle} data-testid={testId} />;
+    if (disabled)
+      return (
+        <Icon
+          color={darkmode ? grayDisabledDark : grayDisabledLight}
+          className={disabledIcon}
+          data-testid={testId}
+        />
+      );
+    return (
+      <Icon
+        color={darkmode ? grayEnabledDark : grayEnabledLight}
+        className={iconStyle}
+        data-testid={testId}
+      />
+    );
   };
 
   const menuOptionStyle =
     'dark:hover:bg-elevation-3 bg-gray-100 hover:bg-gray-200 dark:bg-elevation-1 dark:border-dark border-light border-t last:rounded-b py-2 px-4 w-full text-lg flex whitespace-nowrap';
 
   const buttonStyle =
-    'dark:hover:bg-elevation hover:bg-gray-200 py-1 px-3 mr-1 rounded text-lg flex whitespace-nowrap';
+    'dark:hover:bg-elevation hover:bg-gray-200 pt-px3 px-3 mr-1 rounded text-lg flex whitespace-nowrap';
+
+  const borderStyle = `border ${borderColor ? borderColor : 'dark:border-primary border-white'}`;
 
   // create an identifier, because otherwise tooltip would render
-  // multiple times, for all button occurrences pagewide
+  // multiple times, for all button occurrences in the app
   const tooltipTargetIdentifier = Math.random()
     .toString(36)
     .replace(/[^a-z]+/g, '')
     .substr(0, 5);
-  // Build a unique classname as target for the tooltip
+  // Build a unique class name as target for the tooltip
   const tooltipTarget = 'tooltip-button-' + tooltipTargetIdentifier;
+
+  const mergedButtonClasses = `${tooltipTarget} ${disabledClasses} ${
+    isMenuOption ? menuOptionStyle : buttonStyle
+  } ${borderStyle}`;
 
   return (
     <>
@@ -76,9 +102,7 @@ export const ButtonWithIcon = ({
       )}
       <button
         disabled={disabled || loading}
-        className={`${tooltipTarget} ${disabledClasses} ${
-          isMenuOption ? menuOptionStyle : buttonStyle
-        }`}
+        className={mergedButtonClasses}
         onClick={(e?) => onClick(e)}
       >
         <IconOfState />
