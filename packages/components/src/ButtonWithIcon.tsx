@@ -1,4 +1,6 @@
 import { ReactElement, MouseEvent } from 'react';
+import { Tooltip } from 'primereact/tooltip';
+
 import tailwindConfig from '../../playground/tailwind.config';
 import resolveConfig from 'tailwindcss/resolveConfig';
 import { TailwindConfig } from 'tailwindcss/tailwind-config';
@@ -15,6 +17,8 @@ export type ButtonProps = {
   disabled?: boolean;
   loading?: boolean;
   isMenuOption?: boolean;
+  tooltipContent?: string;
+  borderColor?: string;
 };
 
 export const ButtonWithIcon = ({
@@ -25,6 +29,7 @@ export const ButtonWithIcon = ({
   disabled,
   loading,
   isMenuOption = false,
+  tooltipContent = '',
 }: ButtonProps): ReactElement => {
   const disabledClasses =
     disabled || loading
@@ -53,14 +58,32 @@ export const ButtonWithIcon = ({
   const buttonStyle =
     'dark:hover:bg-elevation hover:bg-gray-200 py-1 px-3 mr-1 rounded text-lg flex whitespace-nowrap';
 
+  // create an identifier, because otherwise tooltip would render
+  // multiple times, for all button occurrences pagewide
+  const tooltipTargetIdentifier = Math.random()
+    .toString(36)
+    .replace(/[^a-z]+/g, '')
+    .substr(0, 5);
+  // Build a unique classname as target for the tooltip
+  const tooltipTarget = 'tooltip-button-' + tooltipTargetIdentifier;
+
   return (
-    <button
-      disabled={disabled || loading}
-      className={`${disabledClasses} ${isMenuOption ? menuOptionStyle : buttonStyle}`}
-      onClick={(e?) => onClick(e)}
-    >
-      <IconOfState />
-      {label}
-    </button>
+    <>
+      {tooltipContent && (
+        <Tooltip target={`.${tooltipTarget}`} position="bottom" autoHide={false}>
+          {tooltipContent}
+        </Tooltip>
+      )}
+      <button
+        disabled={disabled || loading}
+        className={`${tooltipTarget} ${disabledClasses} ${
+          isMenuOption ? menuOptionStyle : buttonStyle
+        }`}
+        onClick={(e?) => onClick(e)}
+      >
+        <IconOfState />
+        {label}
+      </button>
+    </>
   );
 };
