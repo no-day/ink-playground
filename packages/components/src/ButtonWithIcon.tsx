@@ -96,7 +96,12 @@ export const ButtonWithIcon = ({
   return (
     <>
       {tooltipContent && (
-        <Tooltip target={`.${tooltipTarget}`} position="bottom" autoHide={false}>
+        <Tooltip
+          target={`.${tooltipTarget}`}
+          position="bottom"
+          autoHide={false}
+          className="custom-tooltip"
+        >
           {tooltipContent}
         </Tooltip>
       )}
