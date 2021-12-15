@@ -18,7 +18,7 @@ export type ButtonProps = {
   loading?: boolean;
   isMenuOption?: boolean;
   tooltipContent?: string;
-  borderColor?: string;
+  borderColor?: { color: string; shade: string };
   darkmode?: boolean;
 };
 
@@ -31,45 +31,53 @@ export const ButtonWithIcon = ({
   loading,
   isMenuOption = false,
   tooltipContent = '',
-  borderColor = '',
+  borderColor = { color: 'gray', shade: '600' },
   darkmode = true,
 }: ButtonProps): ReactElement => {
-  const disabledClasses =
-    disabled || loading
-      ? 'cursor-not-allowed dark:text-gray-600 text-gray-400 dark:bg-elevation bg-gray-200'
-      : '';
+  const disabledClasses = disabled || loading ? 'cursor-not-allowed opacity-60' : '';
 
   const IconOfState = (): ReactElement => {
     const iconStyle = 'mt-1.5 mr-1.5 w-4';
     const spinnerIcon = `pi pi-spinner animate-spin ${iconStyle}`;
     const disabledIcon = `dark:text-gray-600 text-gray-400 ${iconStyle}`;
 
-    // Get shades of gray from tailwind config
-    type Colors = { gray: Record<string, string> };
+    // Get colors from tailwind config
+    type Colors = {
+      gray: Record<string, string>;
+      green: Record<string, string>;
+      blue: Record<string, string>;
+      yellow: Record<string, string>;
+      red: Record<string, string>;
+    };
     const colors = fullConfig.theme.colors as Colors;
-    // Icon colors dark mode
-    const grayDisabledDark = colors.gray['600'];
-    const grayEnabledDark = colors.gray['200'];
-    // Icon colors light mode
-    const grayDisabledLight = colors.gray['400'];
-    const grayEnabledLight = colors.gray['600'];
+    // Icon colors
+    const grayDark = colors.gray['200'];
+    const grayLight = colors.gray['600'];
+    const grayIcon = darkmode ? grayDark : grayLight;
+    // Icon colors contract size
+    const sizeColor = borderColor.shade;
+    let bundleSize = colors.green[sizeColor];
+
+    switch (borderColor.color) {
+      case 'green':
+        bundleSize = colors.green[sizeColor];
+        break;
+      case 'blue':
+        bundleSize = colors.blue[sizeColor];
+        break;
+      case 'red':
+        bundleSize = colors.red[sizeColor];
+        break;
+      case 'yellow':
+        bundleSize = colors.yellow[sizeColor];
+        break;
+      default:
+        bundleSize = grayIcon;
+    }
 
     if (loading) return <i className={spinnerIcon} data-testid={'icon-loading'} />;
-    if (disabled)
-      return (
-        <Icon
-          color={darkmode ? grayDisabledDark : grayDisabledLight}
-          className={disabledIcon}
-          data-testid={testId}
-        />
-      );
-    return (
-      <Icon
-        color={darkmode ? grayEnabledDark : grayEnabledLight}
-        className={iconStyle}
-        data-testid={testId}
-      />
-    );
+    if (disabled) return <Icon color={bundleSize} className={disabledIcon} data-testid={testId} />;
+    return <Icon color={bundleSize} className={iconStyle} data-testid={testId} />;
   };
 
   const menuOptionStyle =
@@ -78,20 +86,19 @@ export const ButtonWithIcon = ({
   const buttonStyle =
     'dark:hover:bg-elevation hover:bg-gray-200 pt-px3 px-3 mr-1 rounded text-lg flex whitespace-nowrap';
 
-  const borderStyle = `border ${borderColor ? borderColor : 'dark:border-primary border-white'}`;
-
   // create an identifier, because otherwise tooltip would render
   // multiple times, for all button occurrences in the app
   const tooltipTargetIdentifier = Math.random()
     .toString(36)
     .replace(/[^a-z]+/g, '')
     .substr(0, 5);
+
   // Build a unique class name as target for the tooltip
   const tooltipTarget = 'tooltip-button-' + tooltipTargetIdentifier;
 
   const mergedButtonClasses = `${tooltipTarget} ${disabledClasses} ${
     isMenuOption ? menuOptionStyle : buttonStyle
-  } ${borderStyle}`;
+  }`;
 
   return (
     <>
