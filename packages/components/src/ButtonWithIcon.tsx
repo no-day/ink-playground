@@ -10,7 +10,6 @@ const fullConfig = resolveConfig(tailwindConfig as TailwindConfig);
 export type ButtonProps = {
   label: string;
   Icon: React.FC<React.SVGProps<SVGSVGElement>>;
-  darkmode: boolean;
   onClick: (
     e?: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ) => void | Promise<void> | null;
@@ -20,12 +19,12 @@ export type ButtonProps = {
   isMenuOption?: boolean;
   tooltipContent?: string;
   borderColor?: string;
+  darkmode?: boolean;
 };
 
 export const ButtonWithIcon = ({
   label,
   Icon,
-  darkmode,
   onClick,
   testId,
   disabled,
@@ -33,6 +32,7 @@ export const ButtonWithIcon = ({
   isMenuOption = false,
   tooltipContent = '',
   borderColor = '',
+  darkmode = true,
 }: ButtonProps): ReactElement => {
   const disabledClasses =
     disabled || loading
