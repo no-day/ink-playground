@@ -7,6 +7,15 @@ import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
 const fullConfig = resolveConfig(tailwindConfig as TailwindConfig);
 
+// Get colors from tailwind config
+type Colors = {
+  gray: Record<string, string>;
+  green: Record<string, string>;
+  blue: Record<string, string>;
+  yellow: Record<string, string>;
+  red: Record<string, string>;
+};
+
 export type ButtonProps = {
   label: string;
   Icon: React.FC<React.SVGProps<SVGSVGElement>>;
@@ -18,7 +27,7 @@ export type ButtonProps = {
   loading?: boolean;
   isMenuOption?: boolean;
   tooltipContent?: string;
-  borderColor?: { color: string; shade: string };
+  borderColor?: { color: keyof Colors; shade: string };
   darkmode?: boolean;
 };
 
@@ -41,14 +50,6 @@ export const ButtonWithIcon = ({
     const spinnerIcon = `pi pi-spinner animate-spin ${iconStyle}`;
     const disabledIcon = `dark:text-gray-600 text-gray-400 ${iconStyle}`;
 
-    // Get colors from tailwind config
-    type Colors = {
-      gray: Record<string, string>;
-      green: Record<string, string>;
-      blue: Record<string, string>;
-      yellow: Record<string, string>;
-      red: Record<string, string>;
-    };
     const colors = fullConfig.theme.colors as Colors;
     // Icon colors
     const grayDark = colors.gray['200'];
@@ -56,24 +57,10 @@ export const ButtonWithIcon = ({
     const grayIcon = darkmode ? grayDark : grayLight;
     // Icon colors contract size
     const sizeColor = borderColor.shade;
-    let bundleSize = colors.green[sizeColor];
 
-    switch (borderColor.color) {
-      case 'green':
-        bundleSize = colors.green[sizeColor];
-        break;
-      case 'blue':
-        bundleSize = colors.blue[sizeColor];
-        break;
-      case 'red':
-        bundleSize = colors.red[sizeColor];
-        break;
-      case 'yellow':
-        bundleSize = colors.yellow[sizeColor];
-        break;
-      default:
-        bundleSize = grayIcon;
-    }
+    const bundleSize_ = colors[borderColor.color][sizeColor];
+
+    let bundleSize = colors.green[sizeColor];
 
     if (loading) return <i className={spinnerIcon} data-testid={'icon-loading'} />;
     if (disabled) return <Icon color={bundleSize} className={disabledIcon} data-testid={testId} />;
